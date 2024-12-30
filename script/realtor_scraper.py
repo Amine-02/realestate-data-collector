@@ -1,6 +1,6 @@
 import requests
 
-def get_realtor_page(current_page=1):
+def fetch_realtor_page(current_page=1):
     url = "https://api2.realtor.ca/Listing.svc/PropertySearch_Post"
 
     # Search criterias for Saint-Hubert appartments
@@ -40,10 +40,10 @@ def get_realtor_page(current_page=1):
         print(f"Request failed with status {response.status_code}")
         return None
     
-def get_data_page():
+def fetch_realtor_data():
     current_page = 1
     while True:
-        data = get_realtor_page(current_page=current_page)
+        data = fetch_realtor_page(current_page=current_page)
         if data["Paging"]["CurrentPage"] > data["Paging"]["TotalPages"]:
             break
         if data["ErrorCode"]["Id"] != 200:
@@ -53,4 +53,4 @@ def get_data_page():
         current_page += 1
 
 if __name__ == "__main__":
-    get_data_page()
+    fetch_realtor_data()
