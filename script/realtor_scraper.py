@@ -1,8 +1,8 @@
-from database.firebase_database import *
 import requests
-import locale
-from constants import REALTOR_API_URL, HEADERS, BASE_SEARCH_PAYLOAD, ZONES
-locale.setlocale(locale.LC_ALL, '')
+from datetime import date
+import statistics
+from interface.stats import Stats
+from script.constants import REALTOR_API_URL, HEADERS, BASE_SEARCH_PAYLOAD, ZONES
 
 def fetch_realtor_page(zone, current_page):
     payload = BASE_SEARCH_PAYLOAD.copy()
@@ -15,10 +15,9 @@ def fetch_realtor_page(zone, current_page):
         print(f"Request failed with status {response.status_code}")
         return None
 
-def fetch_realtor_data(zone):
+def compute_stats(zone):
+    prices = []
     current_page = 1
-    total_price = 0
-    counter = 0
     while True:
         data = fetch_realtor_page(zone, current_page)
         if data["Paging"]["CurrentPage"] > data["Paging"]["TotalPages"]:
@@ -27,17 +26,21 @@ def fetch_realtor_data(zone):
             break
         for result in data["Results"]:
             price = int(result["Property"]["Price"].split("$")[0].strip().replace("\xa0", ""))
-            print(result["Id"], locale.currency(price, grouping=True))
-            total_price += price
-            counter += 1
+            prices.append(price)
         current_page += 1
-    print("Average :", locale.currency(total_price/counter, grouping=True))
 
-
-if __name__ == "__main__":
-    # fetch_realtor_data("saint-hubert")
-    test_data = {"test_key": "test_value"}
-    write_to_database(test_data, "/test_path")
-
-    fetched_data = read_from_database("/test_path")
-    print("Fetched data:", fetched_data)
+    date_str = date.today().isoformat()
+    avg_price = round(statistics.mean(prices),2)
+    median_price = statistics.median(prices)
+    min_price = min(prices)
+    max_price = max(prices)
+    std_dev_price = round(statistics.stdev(prices),2) if len(prices) > 1 else 0
+    return Stats(
+        date=date_str,
+        count=len(prices),
+        average_price=avg_price,
+        median_price=median_price,
+        min_price=min_price,
+        max_price=max_price,
+        std_dev_price=std_dev_price
+    )
