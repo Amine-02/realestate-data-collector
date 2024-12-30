@@ -1,5 +1,7 @@
 import requests
+import locale
 from constants import REALTOR_API_URL, HEADERS, BASE_SEARCH_PAYLOAD, ZONES
+locale.setlocale(locale.LC_ALL, '')
 
 
 def fetch_realtor_page(zone, current_page):
@@ -15,6 +17,8 @@ def fetch_realtor_page(zone, current_page):
 
 def fetch_realtor_data(zone):
     current_page = 1
+    total_price = 0
+    counter = 0
     while True:
         data = fetch_realtor_page(zone, current_page)
         if data["Paging"]["CurrentPage"] > data["Paging"]["TotalPages"]:
@@ -22,8 +26,12 @@ def fetch_realtor_data(zone):
         if data["ErrorCode"]["Id"] != 200:
             break
         for result in data["Results"]:
-            print(result["Id"], result["Property"]["Price"].split("$")[0].strip())
+            price = int(result["Property"]["Price"].split("$")[0].strip().replace("\xa0", ""))
+            print(result["Id"], locale.currency(price, grouping=True))
+            total_price += price
+            counter += 1
         current_page += 1
+    print("Average :", locale.currency(total_price/counter, grouping=True))
 
 
 if __name__ == "__main__":
