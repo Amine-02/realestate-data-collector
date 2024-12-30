@@ -1,8 +1,8 @@
+from database.firebase_database import *
 import requests
 import locale
 from constants import REALTOR_API_URL, HEADERS, BASE_SEARCH_PAYLOAD, ZONES
 locale.setlocale(locale.LC_ALL, '')
-
 
 def fetch_realtor_page(zone, current_page):
     payload = BASE_SEARCH_PAYLOAD.copy()
@@ -35,4 +35,9 @@ def fetch_realtor_data(zone):
 
 
 if __name__ == "__main__":
-    fetch_realtor_data("saint-hubert")
+    # fetch_realtor_data("saint-hubert")
+    test_data = {"test_key": "test_value"}
+    write_to_database(test_data, "/test_path")
+
+    fetched_data = read_from_database("/test_path")
+    print("Fetched data:", fetched_data)
