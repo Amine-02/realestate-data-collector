@@ -3,7 +3,7 @@ import requests
 def get_realtor_page(current_page=1):
     url = "https://api2.realtor.ca/Listing.svc/PropertySearch_Post"
 
-    #
+    # Search criterias for Saint-Hubert appartments
     payload = {
         "ZoomLevel": "12",
         "LatitudeMax": "45.56454",
@@ -34,16 +34,23 @@ def get_realtor_page(current_page=1):
     }
 
     response = requests.post(url, data=payload, headers=headers)
-    print(response.status_code)
     if response.status_code == 200:
         return response.json()
     else:
         print(f"Request failed with status {response.status_code}")
         return None
+    
+def get_data_page():
+    current_page = 1
+    while True:
+        data = get_realtor_page(current_page=current_page)
+        if data["Paging"]["CurrentPage"] > data["Paging"]["TotalPages"]:
+            break
+        if data["ErrorCode"]["Id"] != 200:
+            break
+        for result in data["Results"]:
+            print(result["Id"], result["Property"]["Price"].split('$')[0].strip())
+        current_page += 1
 
-# Example usage:
 if __name__ == "__main__":
-    # Get page 1
-    data_page_1 = get_realtor_page(current_page=1)
-    if data_page_1:
-        print("Page 1 data:", data_page_1)
+    get_data_page()
