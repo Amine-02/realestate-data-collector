@@ -2,11 +2,12 @@ import requests
 from datetime import date
 import statistics
 from interface.stats import Stats
-from script.constants import REALTOR_API_URL, HEADERS, BASE_SEARCH_PAYLOAD, ZONES
+from script.constants import REALTOR_API_URL, HEADERS, BASE_SEARCH_PAYLOAD, ALL_ZONES
 
 def fetch_realtor_page(zone, current_page):
+    zone_config = ALL_ZONES.get(zone)
     payload = BASE_SEARCH_PAYLOAD.copy()
-    payload.update(ZONES[zone])
+    payload.update(zone_config)
     payload["CurrentPage"] = current_page
     response = requests.post(REALTOR_API_URL, data=payload, headers=HEADERS)
     if response.status_code == 200:
@@ -28,19 +29,24 @@ def compute_stats(zone):
             price = int(result["Property"]["Price"].split("$")[0].strip().replace("\xa0", ""))
             prices.append(price)
         current_page += 1
+    
+    if not prices:
+        return Stats(
+            date=date.today().isoformat(),
+            count=0,
+            average_price=0,
+            median_price=0,
+            min_price=0,
+            max_price=0,
+            std_dev_price=0
+        )
 
-    date_str = date.today().isoformat()
-    avg_price = round(statistics.mean(prices),2)
-    median_price = statistics.median(prices)
-    min_price = min(prices)
-    max_price = max(prices)
-    std_dev_price = round(statistics.stdev(prices),2) if len(prices) > 1 else 0
     return Stats(
-        date=date_str,
+        date=date.today().isoformat(),
         count=len(prices),
-        average_price=avg_price,
-        median_price=median_price,
-        min_price=min_price,
-        max_price=max_price,
-        std_dev_price=std_dev_price
+        average_price=round(statistics.mean(prices),2),
+        median_price=statistics.median(prices),
+        min_price=min(prices),
+        max_price=max(prices),
+        std_dev_price=round(statistics.stdev(prices),2) if len(prices) > 1 else 0
     )
