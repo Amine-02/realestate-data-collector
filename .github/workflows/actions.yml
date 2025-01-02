@@ -20,7 +20,9 @@ jobs:
           python-version: '3.9'
 
       - name: Decode Firebase Config
-        run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" | base64 --decode > ./database/firebase_config.json
+        shell: bash
+        run: |
+          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" | base64 --decode > ./database/firebase_config.json
 
       - name: Cache pip packages
         uses: actions/cache@v3
