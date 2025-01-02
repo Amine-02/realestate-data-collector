@@ -1,6 +1,7 @@
 import requests
-from datetime import date
+import time
 import statistics
+from datetime import date
 from interface.stats import Stats
 from script.constants import REALTOR_API_URL, HEADERS, BASE_SEARCH_PAYLOAD, ALL_ZONES
 
@@ -10,6 +11,7 @@ def fetch_realtor_page(zone, current_page):
     payload.update(zone_config)
     payload["CurrentPage"] = current_page
     print("::debug::Making request with payload: " + str(payload))  # Shows as debug in GH Actions
+    time.sleep(2)
     response = requests.post(REALTOR_API_URL, data=payload, headers=HEADERS)
     if response.status_code == 200:
         return response.json()
