@@ -9,11 +9,13 @@ def fetch_realtor_page(zone, current_page):
     payload = BASE_SEARCH_PAYLOAD.copy()
     payload.update(zone_config)
     payload["CurrentPage"] = current_page
+    print("::debug::Making request with payload: " + str(payload))  # Shows as debug in GH Actions
     response = requests.post(REALTOR_API_URL, data=payload, headers=HEADERS)
     if response.status_code == 200:
         return response.json()
     else:
-        print(f"Request failed with status {response.status_code}")
+        print("::error::Request failed with status: " + str(response.status_code))  # Shows as error in GH Actions
+        print("::error::Response content: " + response.text)
         return None
 
 def compute_stats(zone):
@@ -21,6 +23,9 @@ def compute_stats(zone):
     current_page = 1
     while True:
         data = fetch_realtor_page(zone, current_page)
+        if data is None:
+            print(f"No data received for zone {zone} on page {current_page}")
+            break
         if data["Paging"]["CurrentPage"] > data["Paging"]["TotalPages"]:
             break
         if data["ErrorCode"]["Id"] != 200:
