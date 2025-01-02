@@ -10,15 +10,33 @@ def fetch_realtor_page(zone, current_page):
     payload = BASE_SEARCH_PAYLOAD.copy()
     payload.update(zone_config)
     payload["CurrentPage"] = current_page
-    print("::debug::Making request with payload: " + str(payload))  # Shows as debug in GH Actions
+    
+    # Add more browser-like headers
+    browser_headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'application/json, text/plain, */*',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Origin': 'https://www.realtor.ca',
+        'Referer': 'https://www.realtor.ca/',
+        'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"Windows"',
+        'Sec-Fetch-Dest': 'empty',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Site': 'same-site',
+        **HEADERS  # Keep any existing important headers
+    }
+    
     time.sleep(2)
-    response = requests.post(REALTOR_API_URL, data=payload, headers=HEADERS)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        print("::error::Request failed with status: " + str(response.status_code))  # Shows as error in GH Actions
-        print("::error::Response content: " + response.text)
+    
+    response = requests.post(REALTOR_API_URL, json=payload, headers=browser_headers)  # Note: changed data to json
+    print(f"Response status: {response.status_code}")
+    
+    if response.status_code != 200:
+        print(f"Response content: {response.text}")
         return None
+        
+    return response.json()
 
 def compute_stats(zone):
     prices = []
