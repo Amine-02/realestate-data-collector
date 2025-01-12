@@ -36,12 +36,10 @@ def make_api_request(payload):
     )
     return response
 
-def fetch_realtor_page(zone, current_page, cookies):
-    print(f"Fetching data for zone: {zone}, page: {current_page}")
+def fetch_realtor_page(zone, current_page):
     
     # Step 1: Get the zone configuration
     zone_config = ALL_ZONES.get(zone)
-    print(f"Zone configuration: {zone_config}")
     
     # Step 2: Prepare the payload
     payload = BASE_SEARCH_PAYLOAD.copy()
