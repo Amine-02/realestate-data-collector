@@ -9,10 +9,14 @@ def init_database():
     # Initialize Firebase Admin once at the start
     firebase_setup.init_firebase_admin()
 
+def clean_up_data(borough: str):
+    realtor_scraper.clean_up_data(borough)
+
+
 def update_stats_for_borough(borough: str):
     # Compute statistics and convert to dict
     stats_dict = asdict(realtor_scraper.compute_stats(borough))
-    
+
     # Get today's date as a string
     today_date = date.today().isoformat()  # "YYYY-MM-DD"
     
@@ -36,4 +40,5 @@ if __name__ == "__main__":
     init_database()
     for borough in ALL_BOROUGHS:
         update_stats_for_borough(borough)
+        clean_up_data(borough)
 

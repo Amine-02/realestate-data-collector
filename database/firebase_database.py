@@ -12,3 +12,7 @@ def read_from_database(path="/"):
         ref = db.reference(path)
         data = ref.get()
         return data
+
+def remove_from_database(path="/"):
+        ref = db.reference(path)
+        ref.delete()
