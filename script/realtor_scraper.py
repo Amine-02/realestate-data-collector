@@ -6,7 +6,7 @@ from interface.stats import Stats
 from script.constants import REALTOR_API_URL, HEADERS, BASE_SEARCH_PAYLOAD, ALL_ZONES
 from playwright.sync_api import sync_playwright
 
-def get_updated_cookies():
+def update_cookies():
     """Retrieve updated cookies using Playwright and update the HEADERS constant."""
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
@@ -59,9 +59,9 @@ def fetch_realtor_page(zone, current_page):
 def compute_stats(zone):
     prices = []
     current_page = 1
-    cookies = get_updated_cookies()
+    update_cookies()
     while True:
-        data = fetch_realtor_page(zone, current_page, cookies)
+        data = fetch_realtor_page(zone, current_page)
         if data is None or not data["Results"]:
             break
         if data["Paging"]["CurrentPage"] > data["Paging"]["TotalPages"]:
