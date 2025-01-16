@@ -1,13 +1,14 @@
+import database.firebase_database as firebase_database
+import random
 import requests
 import statistics
-import database.firebase_database as firebase_database
 from datetime import date
 from interface.stats import Stats
 from script.constants import (
     REALTOR_API_URL,
     HEADERS,
     BASE_SEARCH_PAYLOAD,
-    PROXY_SERVER_LIST,
+    PROXIES_SERVER_LIST,
     ALL_ZONES,
 )
 from playwright.sync_api import sync_playwright
@@ -41,7 +42,10 @@ def make_api_request(payload):
     """Make an API request using updated HEADERS."""
 
     response = requests.post(
-        REALTOR_API_URL, headers=HEADERS, proxies=PROXY_SERVER_LIST, data=payload
+        REALTOR_API_URL,
+        headers=HEADERS,
+        proxies=random.choice(PROXIES_SERVER_LIST),
+        data=payload,
     )
     return response
 
