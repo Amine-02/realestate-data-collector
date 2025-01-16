@@ -29,9 +29,15 @@ def update_cookies():
     
 def make_api_request(payload):
     """Make an API request using updated HEADERS."""
+    proxy = {
+    "http": "https://66.70.235.23:5454",
+    "http": "https://209.121.164.50:31147",
+    }
+
     response = requests.post(
         REALTOR_API_URL,
         headers=HEADERS,
+        proxies=proxy,
         data=payload
     )
     return response
