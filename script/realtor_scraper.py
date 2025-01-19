@@ -15,7 +15,7 @@ from playwright.sync_api import sync_playwright
 
 
 def update_cookies():
-    """Retrieve updated cookies using Playwright and update the HEADERS constant."""
+    # Retrieve updated cookies using Playwright and update the HEADERS constant
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
@@ -35,12 +35,10 @@ def update_cookies():
 
         # Update the global HEADERS constant with the new Cookie value
         HEADERS["Cookie"] = cookies_str
-        print(f"Updated HEADERS with cookies: {HEADERS}")
 
 
 def make_api_request(payload):
-    """Make an API request using updated HEADERS."""
-
+    # Make an API request using updated HEADERS
     response = requests.post(
         REALTOR_API_URL,
         headers=HEADERS,

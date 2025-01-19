@@ -10,6 +10,7 @@ def init_database():
     firebase_setup.init_firebase_admin()
 
 def clean_up_data(borough: str):
+    # Check for data validity
     realtor_scraper.clean_up_data(borough)
 
 
