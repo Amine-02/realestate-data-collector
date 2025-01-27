@@ -40,8 +40,9 @@ def update_cookies():
 
 def make_api_request(payload):
     # Make an API request using updated HEADERS
+    realtor_api_url = os.getenv("REALTOR_API_URL")
     response = requests.post(
-        REALTOR_API_URL = os.getenv("REALTOR_API_URL"),
+        url = realtor_api_url,
         headers=HEADERS,
         proxies=random.choice(PROXIES_SERVER_LIST),
         data=payload,
