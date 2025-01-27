@@ -25,7 +25,7 @@ jobs:
 
       - name: Debug FIREBASE_SERVICE_ACCOUNT
         run: |
-          echo "FIREBASE_SERVICE_ACCOUNT=${FIREBASE_SERVICE_ACCOUNT}"
+          echo "Is FIREBASE_SERVICE_ACCOUNT set? ${FIREBASE_SERVICE_ACCOUNT:+Yes}"
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
