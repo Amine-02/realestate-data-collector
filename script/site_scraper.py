@@ -40,10 +40,10 @@ def update_cookies():
 
 def make_api_request(payload):
     # Make an API request using updated HEADERS
-    site_api_url = os.getenv("SITE_URL_API")
+    site_url_api = os.getenv("SITE_URL_API")
     proxies = json.loads(os.getenv("PROXIES_SERVER_LIST"))
     response = requests.post(
-        url = site_api_url,
+        url = site_url_api,
         headers=HEADERS,
         proxies=random.choice(proxies),
         data=payload,
