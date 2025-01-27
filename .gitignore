@@ -1,6 +1,5 @@
 # Db config and env files
 firebase_config.json
-env.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

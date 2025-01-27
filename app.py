@@ -9,7 +9,7 @@ init_database()
 data = read_from_database("/")
 
 # Set page config to wide mode to use full width
-st.set_page_config(layout="wide")
+st.set_page_config(page_title="RealEstate Dashboard", page_icon="🏢",layout="wide")
 st.markdown(
     "<h1 style='text-align: center;'>Appartement prices in Greater Montreal 🏢</h1>",
     unsafe_allow_html=True,
@@ -63,8 +63,9 @@ st.markdown(
     unsafe_allow_html=True,
 )
 price_type = st.sidebar.selectbox(
-    "",
+    "Hidden",
     ["minimum_price", "maximum_price", "median_price"],
+    label_visibility="hidden"
 )
 
 # Average price trend over time for selected regions

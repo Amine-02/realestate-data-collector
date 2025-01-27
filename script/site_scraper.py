@@ -7,7 +7,9 @@ from database.firebase_database import read_from_database, remove_from_database
 from datetime import date
 from interface.stats import Stats
 from playwright.sync_api import sync_playwright
+from dotenv import load_dotenv
 
+load_dotenv()
 HEADERS = json.loads(os.getenv("HEADERS", "{}"))
 RIVE_SUD_ZONES = json.loads(os.getenv("RIVE_SUD_ZONES", "{}"))
 MONTREAL_BOROUGH_ZONES = json.loads(os.getenv("MONTREAL_BOROUGH_ZONES", "{}"))
