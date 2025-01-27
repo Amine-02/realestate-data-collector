@@ -15,7 +15,7 @@ jobs:
           SITE_URL_API: ${{ secrets.SITE_URL_API }}
           HEADERS: ${{ secrets.HEADERS }}
           RIVE_SUD_ZONES: ${{ secrets.RIVE_SUD_ZONES }}
-          MONTREAL_BOROUGH_ZONES: ${{ secrets.MONTREAL_BOROUGH_ZONES }}
+          MONTREAL_BOROUGH_ZONES: ${{ secrets.MONTREAL_BOROUGH_ZONES }}FIREBASE_SERVICE_ACCOUNT
           MONTREAL_RECONSTITUTED_CITIES_ZONES: ${{ secrets.MONTREAL_RECONSTITUTED_CITIES_ZONES }}
           PROXIES_SERVER_LIST: ${{ secrets.PROXIES_SERVER_LIST }}
           FIREBASE_SERVICE_ACCOUNT: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
@@ -25,7 +25,11 @@ jobs:
 
       - name: Debug FIREBASE_SERVICE_ACCOUNT
         run: |
-          echo "Is FIREBASE_SERVICE_ACCOUNT set? ${FIREBASE_SERVICE_ACCOUNT:+Yes}"
+          if [ -n "${FIREBASE_SERVICE_ACCOUNT}" ]; then
+            echo "FIREBASE_SERVICE_ACCOUNT is set."
+          else
+            echo "FIREBASE_SERVICE_ACCOUNT is NOT set."
+          fi
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
