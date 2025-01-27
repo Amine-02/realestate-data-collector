@@ -4,7 +4,7 @@ import json
 from firebase_admin import credentials
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=False)
 firebase_creds = os.getenv("FIREBASE_SERVICE_ACCOUNT")
 if not firebase_creds:
     raise ValueError("FIREBASE_SERVICE_ACCOUNT environment variable is not set")
