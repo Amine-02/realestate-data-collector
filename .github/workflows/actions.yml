@@ -30,7 +30,8 @@ jobs:
       - name: decode Firebase Config
         shell: bash
         run: |
-          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" | base64 --decode > ./database/firebase_config.json
+          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" | base64 --decode | jq -c . > /dev/null
+          echo "FIREBASE_SERVICE_ACCOUNT=$(echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" | base64 --decode)" >> $GITHUB_ENV
 
       - name: cache pip packages
         uses: actions/cache@v4

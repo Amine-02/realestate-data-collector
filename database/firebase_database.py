@@ -6,7 +6,6 @@ def init_database():
     if not firebase_admin._apps:
         firebase_setup.init_firebase_admin()
 
-
 def write_to_database(data, path="/"):
         ref = db.reference(path)
         ref.set(data)
