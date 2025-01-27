@@ -2,9 +2,9 @@ import firebase_admin
 import os
 import json
 from firebase_admin import credentials
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 
-# load_dotenv()
+load_dotenv()
 firebase_creds = os.getenv("FIREBASE_SERVICE_ACCOUNT")
 print(firebase_creds)
 if not firebase_creds:
