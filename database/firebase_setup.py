@@ -8,6 +8,7 @@ load_dotenv()
 firebase_creds = os.getenv("FIREBASE_SERVICE_ACCOUNT")
 print(firebase_creds)
 if not firebase_creds:
+    print(firebase_creds)
     raise ValueError("FIREBASE_SERVICE_ACCOUNT environment variable is not set")
 FIREBASE_SERVICE_ACCOUNT = json.loads(firebase_creds)
 def init_firebase_admin():
