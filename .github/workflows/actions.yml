@@ -18,6 +18,7 @@ jobs:
           MONTREAL_BOROUGH_ZONES: ${{ secrets.MONTREAL_BOROUGH_ZONES }}
           MONTREAL_RECONSTITUTED_CITIES_ZONES: ${{ secrets.MONTREAL_RECONSTITUTED_CITIES_ZONES }}
           PROXIES_SERVER_LIST: ${{ secrets.PROXIES_SERVER_LIST }}
+          FIREBASE_SERVICE_ACCOUNT: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
     steps:
       - name: checkout repo content
         uses: actions/checkout@v3
@@ -26,12 +27,6 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.9"
-
-      - name: decode Firebase Config
-        shell: bash
-        run: |
-          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" | base64 --decode | jq -c . > /dev/null
-          echo "FIREBASE_SERVICE_ACCOUNT=$(echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" | base64 --decode)" >> $GITHUB_ENV
 
       - name: cache pip packages
         uses: actions/cache@v4
