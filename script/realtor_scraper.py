@@ -1,7 +1,7 @@
-import database.firebase_database as firebase_database
 import random
 import requests
 import statistics
+from database.firebase_database import read_from_database, remove_from_database
 from datetime import date
 from interface.stats import Stats
 from script.constants import (
@@ -110,7 +110,7 @@ def compute_stats(zone):
 
 
 def clean_up_data(zone):
-    all_data = firebase_database.read_from_database(zone)
+    all_data = read_from_database(zone)
     if not all_data:
         print(f"No data found under '{zone}'.")
         return
@@ -119,5 +119,5 @@ def clean_up_data(zone):
         if isinstance(child_value, dict):
             if child_value.get("count") == 0:
                 delete_path = f"{zone}/{child_key}"
-                firebase_database.remove_from_database(delete_path)
+                remove_from_database(delete_path)
                 print(f"Deleted '{delete_path}' because count=0.")

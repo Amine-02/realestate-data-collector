@@ -1,13 +1,10 @@
+import firebase_admin
 from datetime import date
 from dataclasses import asdict
 from script.constants import ALL_BOROUGHS
-
+from database.firebase_database import init_database, read_from_database, append_to_database
 from database import firebase_setup, firebase_database
 from script import realtor_scraper
-
-def init_database():
-    # Initialize Firebase Admin once at the start
-    firebase_setup.init_firebase_admin()
 
 def clean_up_data(borough: str):
     # Check for data validity
@@ -25,7 +22,7 @@ def update_stats_for_borough(borough: str):
     db_path = f"/{borough}"
     
     # Fetch existing data under the borough path
-    existing_data = firebase_database.read_from_database(db_path) or {}
+    existing_data = read_from_database(db_path) or {}
 
     # Check if today's date already exists in any entry
     entry_exists = any(entry.get("date") == today_date for entry in existing_data.values())
@@ -34,7 +31,7 @@ def update_stats_for_borough(borough: str):
         print(f"Entry for {today_date} in borough '{borough}' already exists. Skipping write.")
     else:
         # Add the new data (append as a new entry)
-        firebase_database.append_to_database(stats_dict, db_path)
+        append_to_database(stats_dict, db_path)
         print(f"New entry for {today_date} in borough '{borough}' added.")
 
 if __name__ == "__main__":
