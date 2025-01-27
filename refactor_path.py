@@ -1,4 +1,4 @@
-from script.constants import ALL_BOROUGHS
+from script.realtor_scraper import ALL_BOROUGHS
 from database import firebase_setup, firebase_database
 
 def init_database():

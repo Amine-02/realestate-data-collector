@@ -5,22 +5,21 @@ import statistics
 from database.firebase_database import read_from_database, remove_from_database
 from datetime import date
 from interface.stats import Stats
-from script.constants import (
-    REALTOR_API_URL,
-    HEADERS,
-    BASE_SEARCH_PAYLOAD,
-    PROXIES_SERVER_LIST,
-    ALL_ZONES,
-)
 from playwright.sync_api import sync_playwright
 
+HEADERS = os.getenv("HEADERS")
+RIVE_SUD_ZONES = os.getenv("RIVE_SUD_ZONES")
+MONTREAL_BOROUGH_ZONES = os.getenv("MONTREAL_BOROUGH_ZONES")
+MONTREAL_RECONSTITUTED_CITIES_ZONES = os.getenv("MONTREAL_RECONSTITUTED_CITIES_ZONES")
+ALL_ZONES = {**RIVE_SUD_ZONES, **MONTREAL_BOROUGH_ZONES, **MONTREAL_RECONSTITUTED_CITIES_ZONES}
 
 def update_cookies():
     # Retrieve updated cookies using Playwright and update the HEADERS constant
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
-        page.goto("https://www.realtor.ca")
+        site_url = os.getenv("SITE_URL")
+        page.goto(site_url)
 
         # Wait for the cookies to be set by the website
         page.wait_for_timeout(1000)
@@ -40,11 +39,12 @@ def update_cookies():
 
 def make_api_request(payload):
     # Make an API request using updated HEADERS
-    realtor_api_url = os.getenv("REALTOR_API_URL")
+    realtor_api_url = os.getenv("SITE_API_URL")
+    proxies = os.getenv("PROXIES_SERVER_LIST")
     response = requests.post(
         url = realtor_api_url,
         headers=HEADERS,
-        proxies=random.choice(PROXIES_SERVER_LIST),
+        proxies=random.choice(proxies),
         data=payload,
     )
     return response
@@ -54,9 +54,9 @@ def fetch_realtor_page(zone, current_page):
 
     # Step 1: Get the zone configuration
     zone_config = ALL_ZONES.get(zone)
-
+    payload = os.getenv("BASE_SEARCH_PAYLOAD")
     # Step 2: Prepare the payload
-    payload = BASE_SEARCH_PAYLOAD.copy()
+    payload = payload.copy()
     payload.update(zone_config)
     payload["CurrentPage"] = current_page
 

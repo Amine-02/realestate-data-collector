@@ -1,9 +1,8 @@
 import firebase_admin
 from datetime import date
 from dataclasses import asdict
-from script.constants import ALL_BOROUGHS
+from script.realtor_scraper import ALL_BOROUGHS
 from database.firebase_database import init_database, read_from_database, append_to_database
-from database import firebase_setup, firebase_database
 from script import realtor_scraper
 
 def clean_up_data(borough: str):
