@@ -1,3 +1,4 @@
+import os
 import random
 import requests
 import statistics
@@ -40,7 +41,7 @@ def update_cookies():
 def make_api_request(payload):
     # Make an API request using updated HEADERS
     response = requests.post(
-        REALTOR_API_URL,
+        REALTOR_API_URL = os.getenv("REALTOR_API_URL"),
         headers=HEADERS,
         proxies=random.choice(PROXIES_SERVER_LIST),
         data=payload,
