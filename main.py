@@ -1,7 +1,7 @@
 import firebase_admin
 from datetime import date
 from dataclasses import asdict
-from script.site_scraper import ALL_BOROUGHS
+from script.constants import ALL_BOROUGHS
 from database.firebase_database import init_database, read_from_database, append_to_database
 from script import site_scraper
 
