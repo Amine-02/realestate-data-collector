@@ -1,4 +1,5 @@
 import os
+import json
 import random
 import requests
 import statistics
@@ -7,10 +8,10 @@ from datetime import date
 from interface.stats import Stats
 from playwright.sync_api import sync_playwright
 
-HEADERS = os.getenv("HEADERS")
-RIVE_SUD_ZONES = os.getenv("RIVE_SUD_ZONES")
-MONTREAL_BOROUGH_ZONES = os.getenv("MONTREAL_BOROUGH_ZONES")
-MONTREAL_RECONSTITUTED_CITIES_ZONES = os.getenv("MONTREAL_RECONSTITUTED_CITIES_ZONES")
+HEADERS = json.loads(os.getenv("HEADERS", "{}"))
+RIVE_SUD_ZONES = json.loads(os.getenv("RIVE_SUD_ZONES", "{}"))
+MONTREAL_BOROUGH_ZONES = json.loads(os.getenv("MONTREAL_BOROUGH_ZONES", "{}"))
+MONTREAL_RECONSTITUTED_CITIES_ZONES = json.loads(os.getenv("MONTREAL_RECONSTITUTED_CITIES_ZONES", "{}"))
 ALL_ZONES = {**RIVE_SUD_ZONES, **MONTREAL_BOROUGH_ZONES, **MONTREAL_RECONSTITUTED_CITIES_ZONES}
 
 def update_cookies():
@@ -39,10 +40,10 @@ def update_cookies():
 
 def make_api_request(payload):
     # Make an API request using updated HEADERS
-    realtor_api_url = os.getenv("SITE_API_URL")
-    proxies = os.getenv("PROXIES_SERVER_LIST")
+    site_api_url = os.getenv("SITE_API_URL")
+    proxies = json.loads(os.getenv("PROXIES_SERVER_LIST"))
     response = requests.post(
-        url = realtor_api_url,
+        url = site_api_url,
         headers=HEADERS,
         proxies=random.choice(proxies),
         data=payload,
@@ -50,11 +51,11 @@ def make_api_request(payload):
     return response
 
 
-def fetch_realtor_page(zone, current_page):
+def fetch_site_page(zone, current_page):
 
     # Step 1: Get the zone configuration
     zone_config = ALL_ZONES.get(zone)
-    payload = os.getenv("BASE_SEARCH_PAYLOAD")
+    payload = json.loads(os.getenv("BASE_SEARCH_PAYLOAD"))
     # Step 2: Prepare the payload
     payload = payload.copy()
     payload.update(zone_config)
@@ -75,7 +76,7 @@ def compute_stats(zone):
     current_page = 1
     update_cookies()
     while True:
-        data = fetch_realtor_page(zone, current_page)
+        data = fetch_site_page(zone, current_page)
         if data is None or not data["Results"]:
             break
         if data["Paging"]["CurrentPage"] > data["Paging"]["TotalPages"]:

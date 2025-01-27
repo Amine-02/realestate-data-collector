@@ -1,18 +1,18 @@
 import firebase_admin
 from datetime import date
 from dataclasses import asdict
-from script.realtor_scraper import ALL_BOROUGHS
+from script.site_scraper import ALL_BOROUGHS
 from database.firebase_database import init_database, read_from_database, append_to_database
-from script import realtor_scraper
+from script import site_scraper
 
 def clean_up_data(borough: str):
     # Check for data validity
-    realtor_scraper.clean_up_data(borough)
+    site_scraper.clean_up_data(borough)
 
 
 def update_stats_for_borough(borough: str):
     # Compute statistics and convert to dict
-    stats_dict = asdict(realtor_scraper.compute_stats(borough))
+    stats_dict = asdict(site_scraper.compute_stats(borough))
 
     # Get today's date as a string
     today_date = date.today().isoformat()  # "YYYY-MM-DD"
