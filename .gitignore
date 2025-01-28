@@ -1,5 +1,5 @@
 # Db config and env files
-# firebase_config.json
+firebase_config.json
 .streamlit/secrets.toml 
 
 # Byte-compiled / optimized / DLL files

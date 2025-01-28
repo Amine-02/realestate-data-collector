@@ -10,6 +10,7 @@ jobs:
     runs-on:
       - self-hosted
     env:
+      
       BASE_SEARCH_PAYLOAD: ${{ secrets.BASE_SEARCH_PAYLOAD }}
       SITE_URL: ${{ secrets.SITE_URL }}
       SITE_URL_API: ${{ secrets.SITE_URL_API }}
@@ -18,31 +19,10 @@ jobs:
       MONTREAL_BOROUGH_ZONES: ${{ secrets.MONTREAL_BOROUGH_ZONES }}
       MONTREAL_RECONSTITUTED_CITIES_ZONES: ${{ secrets.MONTREAL_RECONSTITUTED_CITIES_ZONES }}
       PROXIES_SERVER_LIST: ${{ secrets.PROXIES_SERVER_LIST }}
-      FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-      FIREBASE_SERVICE_ACCOUNT2: ${{ secrets.FIREBASE_SERVICE_ACCOUNT2 }}
 
     steps:
       - name: Checkout repo content
         uses: actions/checkout@v3
-
-      - name: Debug Environment Variables
-        run: env | grep FIREBASE
-
-      - name: Debug FIREBASE_SERVICE_ACCOUNT2 content
-        shell: bash
-        run: |
-          if [ -n "${FIREBASE_SERVICE_ACCOUNT2}" ]; then
-            echo "FIREBASE_SERVICE_ACCOUNT2 is set."
-            echo "Length: ${#FIREBASE_SERVICE_ACCOUNT2}"
-            
-            # Decode and output the first few lines for debugging
-            echo "Decoded content (first few lines):"
-            echo "${FIREBASE_SERVICE_ACCOUNT2}" | base64 --decode | head -n 10
-          else
-            echo "FIREBASE_SERVICE_ACCOUNT2 is NOT set."
-          fi
-        env:
-          FIREBASE_SERVICE_ACCOUNT2: ${{ secrets.FIREBASE_SERVICE_ACCOUNT2 }}
 
       - name: Setup Python
         uses: actions/setup-python@v4
