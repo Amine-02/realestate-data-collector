@@ -19,6 +19,8 @@ jobs:
       MONTREAL_RECONSTITUTED_CITIES_ZONES: ${{ secrets.MONTREAL_RECONSTITUTED_CITIES_ZONES }}
       PROXIES_SERVER_LIST: ${{ secrets.PROXIES_SERVER_LIST }}
       FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      FIREBASE_SERVICE_ACCOUNT2: ${{ secrets.FIREBASE_SERVICE_ACCOUNT2 }}
+
     steps:
       - name: Checkout repo content
         uses: actions/checkout@v3
