@@ -5,6 +5,7 @@ import base64
 from firebase_admin import credentials
 from dotenv import load_dotenv
 
+print("FIREBASE_SERVICE_ACCOUNT:", os.getenv("FIREBASE_SERVICE_ACCOUNT"))
 # Load environment variables
 load_dotenv(override=False)
 

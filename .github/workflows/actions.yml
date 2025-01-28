@@ -25,6 +25,9 @@ jobs:
       - name: Checkout repo content
         uses: actions/checkout@v3
 
+      - name: Debug Environment Variables
+        run: env | grep FIREBASE
+
       - name: Debug FIREBASE_SERVICE_ACCOUNT2 content
         shell: bash
         run: |
