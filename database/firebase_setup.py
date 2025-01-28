@@ -6,17 +6,12 @@ from firebase_admin import credentials
 from dotenv import load_dotenv
 import streamlit as st
 
-# Load environment variables
-# load_dotenv()
-# firebase_creds_base64 = os.getenv("FIREBASE_BASE64")
-
 firebase_creds_base64 = st.secrets["FIREBASE_BASE64"]
 
 if not firebase_creds_base64:
     raise ValueError("Environment variable FIREBASE_BASE64 is missing or not set.")
 
 firebase_creds = json.loads(base64.b64decode(firebase_creds_base64).decode('utf-8'))
-print(firebase_creds)
 
 # Initialize Firebase Admin SDK
 def init_firebase_admin():
