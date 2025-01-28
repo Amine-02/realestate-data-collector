@@ -4,10 +4,13 @@ import json
 import base64
 from firebase_admin import credentials
 from dotenv import load_dotenv
+import streamlit as st
 
 # Load environment variables
-load_dotenv()
-firebase_creds_base64 = os.getenv("FIREBASE_BASE64")
+# load_dotenv()
+# firebase_creds_base64 = os.getenv("FIREBASE_BASE64")
+
+firebase_creds_base64 = st.secrets["FIREBASE_BASE64"]
 
 if not firebase_creds_base64:
     raise ValueError("Environment variable FIREBASE_BASE64 is missing or not set.")
