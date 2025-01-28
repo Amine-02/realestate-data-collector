@@ -1,15 +1,12 @@
 import firebase_admin
-import os
-import json
 from firebase_admin import credentials
-from dotenv import load_dotenv
+import streamlit as st
 
-load_dotenv(override=False)
-firebase_creds = os.getenv("FIREBASE_SERVICE_ACCOUNT")
-if not firebase_creds:
-    raise ValueError("FIREBASE_SERVICE_ACCOUNT environment variable is not set")
-FIREBASE_SERVICE_ACCOUNT = json.loads(firebase_creds)
+# Get Firebase credentials from Streamlit secrets
+FIREBASE_SERVICE_ACCOUNT = st.secrets["FIREBASE_SERVICE_ACCOUNT"]
+
 def init_firebase_admin():
+    # Initialize Firebase Admin SDK with credentials from secrets
     cred = credentials.Certificate(FIREBASE_SERVICE_ACCOUNT)
     firebase_admin.initialize_app(cred, {
         "databaseURL": "https://realestate-data-collector-default-rtdb.firebaseio.com/"
