@@ -12,7 +12,7 @@ load_dotenv(override=False)
 # Get the Base64-encoded service account string from the environment variable
 firebase_creds_base64 = os.getenv("FIREBASE_SERVICE_ACCOUNT2")
 if not firebase_creds_base64:
-    raise ValueError("FIREBASE_SERVICE_ACCOUNT environment variable is not set")
+    raise ValueError("FIREBASE_SERVICE_ACCOUNT:", os.getenv("FIREBASE_SERVICE_ACCOUNT"))
 
 # Decode the Base64-encoded string
 firebase_creds_json = base64.b64decode(firebase_creds_base64).decode("utf-8")
