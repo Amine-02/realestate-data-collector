@@ -4,7 +4,7 @@ Welcome to the **Montreal Real Estate Dashboard**, a Streamlit-powered applicati
 
 ## 🚀 Live Dashboard
 
-Access the dashboard here: [Montreal Real Estate Dashboard](https://realestate-data-collectorgit-gjuaqmektdqrbf7sfsauiu.streamlit.app/)
+Access the dashboard here: [Montreal Real Estate Dashboard](https://amine-02-realestate-data-collector-app-ztbg1b.streamlit.app/)
 
 ## 📈 Features
 
