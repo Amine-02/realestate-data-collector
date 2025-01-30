@@ -94,7 +94,7 @@ avg_chart = (
     )
     .properties(
         title="Average price trend over time by region",
-        height=700,
+        height=800,
     )
     .configure_title(fontSize=20, anchor="middle", color="white")
 )
@@ -119,7 +119,7 @@ count_chart = (
     )
     .properties(
         title="Count of listings over time by region",
-        height=700,
+        height=800,
     )
     .configure_title(fontSize=20, anchor="middle", color="white")
 )
@@ -150,7 +150,7 @@ dist_chart = (
     )
     .properties(
         title=f"Distribution of {price_type.replace('_', ' ')} by region",
-        height=700,
+        height=800,
     )
     .configure_title(fontSize=20, anchor="middle", color="white")
 )
@@ -180,21 +180,15 @@ std_dev_chart = (
     )
     .properties(
         title="Standard deviation price over time by region",
-        height=700,
+        height=800,
     )
     .configure_title(fontSize=20, anchor="middle", color="white")
 )
 
-col1, col2 = st.columns(2)
-
-# Display charts
-with col1:
-    st.altair_chart(avg_chart, use_container_width=True)
-    st.altair_chart(dist_chart, use_container_width=True)
-
-with col2:
-    st.altair_chart(count_chart, use_container_width=True)
-    st.altair_chart(std_dev_chart, use_container_width=True)
+st.altair_chart(avg_chart, use_container_width=True)
+st.altair_chart(dist_chart, use_container_width=True)
+st.altair_chart(count_chart, use_container_width=True)
+st.altair_chart(std_dev_chart, use_container_width=True)
 
 # Display filtered dataframe
 st.markdown(
