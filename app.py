@@ -48,7 +48,7 @@ for i, region in enumerate(unique_regions):
 if selected_regions:
     filtered_data = df_all[df_all["region"].isin(selected_regions)]
 else:
-    filtered_data = pd.DataFrame(columns=df_all.columns, width=1000)
+    filtered_data = pd.DataFrame(columns=df_all.columns)
 
 # Sidebar selector for price type
 st.sidebar.markdown("### Select distribution price type")
