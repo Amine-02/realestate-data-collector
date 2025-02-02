@@ -3,196 +3,157 @@ import pandas as pd
 import altair as alt
 from database.firebase_database import init_database, read_from_database
 
-# Call once at the start
+# Initialize database
 init_database()
-# Now read the data
 data = read_from_database("/")
 
-# Set page config to wide mode to use full width
-st.set_page_config(page_title="RealEstate Dashboard", page_icon="🏢",layout="wide")
+# Dashbord layout
+st.set_page_config(page_title="RealEstate Dashboard", page_icon="🏢", layout="wide")
+
+# Dashboard title
 st.markdown(
-    "<h1 style='text-align: center;'>Appartement prices in Greater Montreal 🏢</h1>",
+    """
+    <h1 style='text-align: center; color: #89CFF0;'>Appartement Prices in Greater Montreal 🏢</h1>
+    <hr style="border:1px solid #89CFF0;">
+    """,
     unsafe_allow_html=True,
 )
 
+# Data preprocessing
 south_shore_regions = ["longueuil", "saint-hubert", "brossard"]
 records = []
 for region, region_dict in data.items():
     if region in south_shore_regions:
         continue
     for entry_id, stats in region_dict.items():
-        record = {
-            "region": region,
-            "date": stats["date"],
-            "average_price": stats["average_price"],
-            "count": stats["count"],
-            "maximum_price": stats["max_price"],
-            "median_price": stats["median_price"],
-            "minimum_price": stats["min_price"],
-            "std_dev_price": stats["std_dev_price"],
-        }
-        records.append(record)
+        records.append(
+            {
+                "region": region,
+                "date": stats["date"],
+                "average_price": stats["average_price"],
+                "count": stats["count"],
+                "maximum_price": stats["max_price"],
+                "median_price": stats["median_price"],
+                "minimum_price": stats["min_price"],
+                "std_dev_price": stats["std_dev_price"],
+            }
+        )
 
 df_all = pd.DataFrame(records)
 df_all["date"] = pd.to_datetime(df_all["date"])
 unique_regions = df_all["region"].unique()
 
-# Sidebar for region selection
-st.sidebar.markdown("### Select regions of interest")
-selected_regions = []
-for i, region in enumerate(unique_regions):
-    if st.sidebar.checkbox(region, value=(i == 0)):  # Checkbox for each region
-        selected_regions.append(region)
+# Sidebar
+with st.sidebar:
+    st.markdown("## Filters 🔍")
+    selected_regions = st.multiselect(
+        "Select regions:", unique_regions, default=unique_regions[:3]
+    )
+    price_type = st.radio(
+        "Choose price metric:",
+        ["minimum_price", "maximum_price", "median_price"],
+        horizontal=True,
+    )
 
-# Filter data based on selected regions
-if selected_regions:
-    filtered_data = df_all[df_all["region"].isin(selected_regions)]
-else:
-    filtered_data = pd.DataFrame(columns=df_all.columns)
-
-# Sidebar selector for price type
-st.sidebar.markdown("### Select distribution price type")
-st.markdown(
-    """
-    <style>
-    [data-baseweb="select"] {
-        margin-top: -30px;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-price_type = st.sidebar.selectbox(
-    "Hidden",
-    ["minimum_price", "maximum_price", "median_price"],
-    label_visibility="hidden"
+# Filter data based on user selection
+filtered_data = (
+    df_all[df_all["region"].isin(selected_regions)]
+    if selected_regions
+    else df_all.iloc[0:0]
 )
 
-# Average price trend over time for selected regions
-avg_chart = (
-    alt.Chart(filtered_data)
-    .mark_line(point=True)
-    .encode(
-        x=alt.X(
-            "date:T",
-            title="Date (Day/Month/Year)",
-            axis=alt.Axis(
-                labelAngle=-45, format="%d/%m/%Y", tickCount="day", grid=True
+# Function to create line charts based on date series data
+def create_chart(data, x_col, y_col, title, y_title):
+    return (
+        alt.Chart(data)
+        .mark_line(point=True)
+        .encode(
+            x=alt.X(
+                x_col, title="Date", axis=alt.Axis(labelAngle=-45, format="%d/%m/%Y")
             ),
-        ),
-        y=alt.Y(
+            y=alt.Y(y_col, title=y_title),
+            color=alt.Color("region:N", legend=alt.Legend(title="Regions")),
+            tooltip=[
+                alt.Tooltip(x_col, format="%d/%m/%Y"),
+                alt.Tooltip(y_col, format=","),
+            ],
+        )
+        .properties(title=title, height=400)
+        .configure_title(fontSize=18, anchor="middle", color="#89CFF0")
+    )
+
+# Display charts in a two-column layout
+col1, col2 = st.columns(2)
+with col1:
+    st.altair_chart(
+        create_chart(
+            filtered_data,
+            "date:T",
             "average_price:Q",
-            title="Average price (CAD)",
+            "Average Price Trend 📈",
+            "Average Price",
         ),
-        color=alt.Color("region:N", title="Region", legend=alt.Legend(title="Regions")),
-        tooltip=[
-            alt.Tooltip("date:T", title="Date (Day/Month/Year)", format="%d/%m/%Y"),
-            alt.Tooltip("average_price:Q", title="Average price", format=","),
-            alt.Tooltip("region:N", title="Region")
-        ]
-
+        use_container_width=True,
     )
-    .properties(
-        title="Average price trend over time by region",
-        height=800,
-    )
-    .configure_title(fontSize=20, anchor="middle", color="white")
-)
-
-# Count of listings over time for selected regions
-count_chart = (
-    alt.Chart(filtered_data)
-    .mark_line(point=True)
-    .encode(
-        x=alt.X(
+    st.altair_chart(
+        create_chart(
+            filtered_data,
             "date:T",
-            title="Date (Day/Month/Year)",
-            axis=alt.Axis(
-                labelAngle=-45, format="%d/%m/%Y", tickCount="day", grid=True
-            ),
+            "std_dev_price:Q",
+            "Price Standard Deviation 📊",
+            "Std Dev of Price",
         ),
-        y=alt.Y(
-            "count:Q",
-            title="Number of listings",
-        ),
-        color=alt.Color("region:N", title="Region", legend=alt.Legend(title="Regions")),
+        use_container_width=True,
     )
-    .properties(
-        title="Count of listings over time by region",
-        height=800,
-    )
-    .configure_title(fontSize=20, anchor="middle", color="white")
-)
 
-# Price distribution chart for selected regions
+filtered_data["price_per_listing"] = filtered_data["average_price"] / filtered_data["count"]
+with col2:
+    st.altair_chart(
+        create_chart(
+            filtered_data,
+            "date:T",
+            "count:Q",
+            "Number of Listings Over Time 🏠",
+            "Number of Listings",
+        ),
+        use_container_width=True,
+    )
+    st.altair_chart(
+        create_chart(
+            filtered_data,
+            "date:T",
+            "price_per_listing:Q",
+            "Price-to-Listing Ratio Over Time 💰",
+            "Price per listing",
+        ),
+        use_container_width=True,
+    )
+
+# Distribution chart
 dist_chart = (
     alt.Chart(filtered_data)
-    .transform_bin(
-        "binned_price",  # Bin start
-        field=f"{price_type}",  # Field to bin
-        bin=alt.Bin(maxbins=10)  # Number of bins
-    )
+    .transform_bin("binned_price", field=price_type, bin=alt.Bin(maxbins=15))
     .mark_bar(opacity=0.7)
     .encode(
         x=alt.X(
-            f"{price_type}:Q",
-            bin=alt.Bin(maxbins=10),
-            title=f"{price_type.replace('_', ' ').capitalize()} (Price ranges)",
+            price_type,
+            bin=alt.Bin(maxbins=15),
+            title=f"{price_type.replace('_', ' ').capitalize()}",
         ),
         y=alt.Y("count()", title="Frequency"),
         color=alt.Color("region:N", legend=alt.Legend(title="Regions")),
         tooltip=[
-            alt.Tooltip("binned_price:Q", title="Price Range (Low)", format=","),
-            alt.Tooltip("binned_price_end:Q", title="Price Range (High)", format=","),
-            alt.Tooltip("count():Q", title="Frequency", format=","),
-            alt.Tooltip("region:N", title="Region")
-        ]
+            alt.Tooltip(price_type, format=",.0f"),
+            alt.Tooltip("count()", format=","),
+        ],
     )
-    .properties(
-        title=f"Distribution of {price_type.replace('_', ' ')} by region",
-        height=800,
-    )
-    .configure_title(fontSize=20, anchor="middle", color="white")
+    .properties(title=f"{price_type.replace('_', ' ').title()} Distribution 📊", height=400)
+    .configure_title(fontSize=18, anchor="middle", color="#89CFF0")
 )
-
-# Standard deviation price over time per regions
-std_dev_chart = (
-    alt.Chart(filtered_data)
-    .mark_line(point=True)
-        .encode(
-        x=alt.X(
-            "date:T",
-            title="Date (Day/Month/Year)",
-            axis=alt.Axis(
-                labelAngle=-45, format="%d/%m/%Y", tickCount="day", grid=True
-            ),
-        ),
-        y=alt.Y(
-            "std_dev_price:Q",
-            title="Standard deviation price",
-        ),
-        color=alt.Color("region:N", title="Region", legend=alt.Legend(title="Regions")),
-        tooltip=[
-            alt.Tooltip("date:T", title="Date (Day/Month/Year)", format="%d/%m/%Y"),
-            alt.Tooltip("std_dev_price:Q", title="Standard deviation price", format=","),
-            alt.Tooltip("region:N", title="Region")
-        ]
-    )
-    .properties(
-        title="Standard deviation price over time by region",
-        height=800,
-    )
-    .configure_title(fontSize=20, anchor="middle", color="white")
-)
-
-st.altair_chart(avg_chart, use_container_width=True)
 st.altair_chart(dist_chart, use_container_width=True)
-st.altair_chart(count_chart, use_container_width=True)
-st.altair_chart(std_dev_chart, use_container_width=True)
 
-# Display filtered dataframe
+# Filtered data
 st.markdown(
-    "<h3 style='text-align: center;'>Real estate data</h3>",
-    unsafe_allow_html=True,
+    "<h3 style='text-align: center;'>Real Estate Data 📄</h3>", unsafe_allow_html=True
 )
-st.dataframe(filtered_data, height=600, use_container_width=True)
+st.dataframe(filtered_data, height=500, use_container_width=True)
