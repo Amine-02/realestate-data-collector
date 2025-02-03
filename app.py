@@ -13,7 +13,7 @@ st.set_page_config(page_title="RealEstate Dashboard", page_icon="🏢", layout="
 # Dashboard title
 st.markdown(
     """
-    <h1 style='text-align: center; color: #89CFF0;'>Appartement Prices in Greater Montreal 🏢</h1>
+    <h1 style='text-align: center; color: #89CFF0;'>Apartment Prices in Greater Montreal 🏢</h1>
     <hr style="border:1px solid #89CFF0;">
     """,
     unsafe_allow_html=True,
@@ -62,25 +62,32 @@ filtered_data = (
     else df_all.iloc[0:0]
 )
 
+legend_hover = alt.selection_point(
+        fields=["region"], on="mouseover", bind="legend", clear="mouseout"
+    )
+
 # Function to create line charts based on date series data
 def create_chart(data, x_col, y_col, title, y_title):
     return (
         alt.Chart(data)
-        .mark_line(point=True)
+        .mark_line(point=True, strokeWidth=2)
         .encode(
             x=alt.X(
                 x_col, title="Date", axis=alt.Axis(labelAngle=-45, format="%d/%m/%Y")
             ),
             y=alt.Y(y_col, title=y_title),
             color=alt.Color("region:N", legend=alt.Legend(title="Regions")),
+            opacity=alt.condition(legend_hover, alt.value(1), alt.value(0.2)),
             tooltip=[
                 alt.Tooltip(x_col, format="%d/%m/%Y"),
                 alt.Tooltip(y_col, format=","),
             ],
         )
+        .add_params(legend_hover)
         .properties(title=title, height=400)
         .configure_title(fontSize=18, anchor="middle", color="#89CFF0")
     )
+
 
 # Display charts in a two-column layout
 col1, col2 = st.columns(2)
@@ -106,7 +113,9 @@ with col1:
         use_container_width=True,
     )
 
-filtered_data["price_per_listing"] = filtered_data["average_price"] / filtered_data["count"]
+filtered_data["price_per_listing"] = (
+    filtered_data["average_price"] / filtered_data["count"]
+)
 with col2:
     st.altair_chart(
         create_chart(
@@ -142,12 +151,16 @@ dist_chart = (
         ),
         y=alt.Y("count()", title="Frequency"),
         color=alt.Color("region:N", legend=alt.Legend(title="Regions")),
+        opacity=alt.condition(legend_hover, alt.value(1), alt.value(0.2)),
         tooltip=[
             alt.Tooltip(price_type, format=",.0f"),
             alt.Tooltip("count()", format=","),
         ],
     )
-    .properties(title=f"{price_type.replace('_', ' ').title()} Distribution 📊", height=400)
+    .add_params(legend_hover)
+    .properties(
+        title=f"{price_type.replace('_', ' ').title()} Distribution 📊", height=400
+    )
     .configure_title(fontSize=18, anchor="middle", color="#89CFF0")
 )
 st.altair_chart(dist_chart, use_container_width=True)
