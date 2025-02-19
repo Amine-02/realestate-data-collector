@@ -10,6 +10,7 @@ jobs:
     runs-on:
       - self-hosted
     env:
+      FIREBASE_BASE64: ${{ secrets.FIREBASE_BASE64 }}
       BASE_SEARCH_PAYLOAD: ${{ secrets.BASE_SEARCH_PAYLOAD }}
       SITE_URL: ${{ secrets.SITE_URL }}
       SITE_URL_API: ${{ secrets.SITE_URL_API }}
