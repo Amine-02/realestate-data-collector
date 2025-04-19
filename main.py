@@ -36,6 +36,6 @@ def update_stats_for_borough(borough: str):
 if __name__ == "__main__":
     init_database()
     for borough in ALL_BOROUGHS:
-        update_stats_for_borough(borough)
+        # update_stats_for_borough(borough)
         clean_up_data(borough)
 
